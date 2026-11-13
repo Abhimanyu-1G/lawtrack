@@ -39,5 +39,9 @@ export default defineConfig({
     url: `http://127.0.0.1:${PORT}/api/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    env: {
+      PORT: String(PORT),
+      CLIENT_ORIGIN: `http://127.0.0.1:${PORT}`,
+    },
   },
 });

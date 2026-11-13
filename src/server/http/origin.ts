@@ -10,6 +10,14 @@ export function isMutatingMethod(method: string): boolean {
   return MUTATING_METHODS.has(method.toUpperCase());
 }
 
+function normalizeOrigin(originStr: string): string {
+  try {
+    return new URL(originStr).origin;
+  } catch {
+    return originStr;
+  }
+}
+
 /**
  * Reject cross-site state changes. Browsers send `Origin` on POST/PATCH/etc.;
  * a request without one is a non-browser client (tests, curl, server-to-server)
@@ -21,14 +29,27 @@ export function assertSameOrigin(request: Request): void {
   const origin = request.headers.get('origin');
   if (!origin) return;
 
-  let expected: string;
-  try {
-    expected = new URL(getEnv().CLIENT_ORIGIN).origin;
-  } catch {
-    expected = getEnv().CLIENT_ORIGIN;
+  const env = getEnv();
+  const expected = normalizeOrigin(env.CLIENT_ORIGIN);
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  if (normalizedOrigin === expected) return;
+
+  // In non-production environments (development / test / E2E), allow loopback equivalents (localhost <-> 127.0.0.1)
+  if (!env.isProduction) {
+    try {
+      const oUrl = new URL(normalizedOrigin);
+      const eUrl = new URL(expected);
+      const isLoopbackHost = (h: string) => h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
+      if (isLoopbackHost(oUrl.hostname) && isLoopbackHost(eUrl.hostname)) {
+        if (oUrl.port === eUrl.port || Number(oUrl.port) === env.PORT) {
+          return;
+        }
+      }
+    } catch {
+      // Fall through to rejection
+    }
   }
 
-  if (origin !== expected) {
-    throw new AppError('FORBIDDEN_ORIGIN', 'This request came from an untrusted origin');
-  }
+  throw new AppError('FORBIDDEN_ORIGIN', 'This request came from an untrusted origin');
 }
