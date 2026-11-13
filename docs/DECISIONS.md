@@ -526,3 +526,11 @@ Devanagari text uses Google Fonts `Noto Sans Devanagari` and `Noto Serif Devanag
 `aria-live="polite"` regions for chat responses, and `role="alert"` for form feedback ensure full WCAG 2.1 AA
 keyboard and screen-reader accessibility.
 
+### D-62. Loopback equivalence in CSRF origin assertion for local dev and E2E
+
+In development and test environments (`!env.isProduction`), browsers and test runners may access the Next.js
+server using either `localhost` or `127.0.0.1` and alternate port configurations (e.g., E2E webServer on port 3100).
+`src/server/http/origin.ts` permits loopback-to-loopback equivalent requests when the target matches the active
+server port, preventing false-positive CSRF rejections during local automated browser tests while maintaining
+strict, uncompromised cross-origin rejection in production.
+
