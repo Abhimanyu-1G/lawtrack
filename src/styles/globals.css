@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * LawTrack design tokens (AGENTS.md §15).
+ * Channels only (R G B) so Tailwind opacity modifiers keep working.
+ * Palette is limited to ivory, coal and royal blue; status colours are for
+ * status only and always paired with a label or icon.
+ */
+:root {
+  --lt-canvas: 251 249 241;
+  --lt-surface: 255 254 250;
+  --lt-ink: 23 23 26;
+  --lt-muted: 85 85 92;
+  --lt-line: 228 223 208;
+
+  --lt-primary: 42 75 196;
+  --lt-primary-hover: 31 58 158;
+  --lt-primary-pressed: 24 46 128;
+  --lt-primary-tint: 231 236 251;
+  --lt-primary-foreground: 251 249 241;
+
+  --lt-success: 47 125 92;
+  --lt-success-tint: 230 241 236;
+  --lt-warning: 138 90 18;
+  --lt-warning-tint: 247 239 224;
+  --lt-danger: 179 38 30;
+  --lt-danger-tint: 248 233 231;
+
+  --lt-radius-card: 12px;
+  --lt-radius-input: 10px;
+  color-scheme: light;
+}
+
+.dark {
+  --lt-canvas: 18 18 20;
+  --lt-surface: 27 27 31;
+  --lt-ink: 245 242 232;
+  --lt-muted: 169 169 176;
+  --lt-line: 44 44 50;
+
+  --lt-primary: 127 152 240;
+  --lt-primary-hover: 157 176 245;
+  --lt-primary-pressed: 110 135 220;
+  --lt-primary-tint: 27 37 71;
+  --lt-primary-foreground: 18 18 20;
+
+  --lt-success: 111 191 154;
+  --lt-success-tint: 20 37 29;
+  --lt-warning: 224 180 99;
+  --lt-warning-tint: 42 33 20;
+  --lt-danger: 240 133 124;
+  --lt-danger-tint: 42 22 20;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif font-semibold tracking-tight text-ink;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+    ring-offset-color: rgb(var(--lt-canvas));
+  }
+
+  ::selection {
+    background-color: rgb(var(--lt-primary-tint));
+    color: rgb(var(--lt-ink));
+  }
+
+  /* Respect the user's motion preference (AGENTS.md §15). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-input focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary focus:shadow-lift;
+  }
+
+  .hairline {
+    @apply border border-line;
+  }
+
+  .prose-legal {
+    @apply max-w-prose text-[1.0625rem] leading-7 text-ink;
+  }
+
+  .prose-legal p + p {
+    @apply mt-4;
+  }
+}
