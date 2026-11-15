@@ -54,7 +54,9 @@ const INTEGRATIONS = [
 export async function runSeed(options: SeedOptions): Promise<SeedResult> {
   const clock = options.clock ?? systemClock;
   const now = clock.nowIso();
-  const includeDemoAccounts = options.includeDemoAccounts ?? process.env.NODE_ENV !== 'production';
+  const includeDemoAccounts =
+    options.includeDemoAccounts ??
+    (process.env.SEED_DEMO_ACCOUNTS === 'true' || process.env.NODE_ENV !== 'production');
   const repos = createRepositories(options.handle);
 
   const accounts = await seedAccounts(repos, { includeDemoAccounts });

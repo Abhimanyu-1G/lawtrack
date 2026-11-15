@@ -11,7 +11,7 @@
     "setup": "npm install && node --import tsx scripts/ensure-env.ts && npm run db:migrate && npm run db:seed",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "npm run db:seed && next start -H 0.0.0.0 -p ${PORT:-3000}",
     "test": "vitest run",
     "test:api": "vitest run tests/api",
     "test:e2e": "playwright test",

@@ -27,6 +27,9 @@ export async function register(): Promise<void> {
       },
       'LawTrack instrumentation ready',
     );
+
+    const { startJobs } = await import('./server/jobs');
+    await startJobs();
   } catch (error) {
     logger.error({ err: error }, 'Environment validation failed — refusing to start');
     throw error;

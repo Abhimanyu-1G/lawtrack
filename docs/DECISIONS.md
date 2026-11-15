@@ -534,3 +534,15 @@ server using either `localhost` or `127.0.0.1` and alternate port configurations
 server port, preventing false-positive CSRF rejections during local automated browser tests while maintaining
 strict, uncompromised cross-origin rejection in production.
 
+### D-63. Railway production deployment configuration
+
+For cloud deployment on Railway:
+1. `src/instrumentation.ts` is the single authoritative instrumentation entry point (root `instrumentation.ts`
+   is removed), ensuring background jobs (`startJobs()`) boot once per server process.
+2. `SEED_DEMO_ACCOUNTS=true` is supported in `runSeed()` to permit pre-populating test staff roles on production
+   demos while preserving the default production refusal when unset.
+3. Database seeding and migrations are chained ahead of `next start -H 0.0.0.0 -p ${PORT:-3000}` to ensure
+   ephemeral / volume-backed SQLite stores are fully initialized before traffic is accepted.
+4. `nixpacks.toml` configures native build toolchains (`gcc`, `gnumake`, `python3`) for `better-sqlite3`.
+
+
